@@ -113,7 +113,7 @@
               <li><a class="dropdown-item" href="/profile">Profile</a></li>
 
               @if(Auth::user()->role === 'admin')
-                <li><a class="dropdown-item" href="">Dashboard Admin</a></li>
+                <li><a class="dropdown-item" href="{{route('dashboard.admin')}}">Dashboard Admin</a></li>
               @endif
 
               <li>

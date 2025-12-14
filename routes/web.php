@@ -25,6 +25,7 @@ Route::get('/', function () {
 Route::prefix('ticket')->group(function () {
     Route::get('/', [TicketController::class, 'listTicket'])->name('ticket');
 });
+
 Route::post('/cart/add', [TicketController::class, 'addToCart'])->name('cart.add');
 Route::post('/cart/update', [TicketController::class, 'updateCart'])->name('cart.update');
 Route::post('/cart/remove', [TicketController::class, 'removeCart'])->name('cart.remove');
@@ -44,6 +45,9 @@ Route::prefix('facility')->group(function () {
     Route::get('/', [FacilityController::class, 'listFacility'])->name('facility');
 });
 
+Route::get('/dashboard-admin', function(){
+    return view('dashboard');
+})->name('dashboard.admin');
 
 Route::prefix('dashboard')->name('dashboard.')->group(function () {
     Route::get('/', [AuthController::class, 'dashboard'])->name('dashboard');

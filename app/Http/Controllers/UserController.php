@@ -17,12 +17,12 @@ class UserController extends Controller
 
     public function getUsers(Request $request)
     {
-    $users = User::select('id', 'name', 'email', 'role');
+        $users = User::select('id', 'name', 'email', 'role');
         return DataTables::of($users)
             ->addIndexColumn()
-            ->addColumn('action', function($row){
-                $actionBtn = '<a href="'.route('dashboard.user.edit', $row->id).'" class="btn btn-warning btn-sm">Edit</a> ';
-                $actionBtn .= '<form action="'.route('dashboard.user.delete', $row->id).'" method="POST" style="display:inline;">';
+            ->addColumn('action', function ($row) {
+                $actionBtn = '<a href="' . route('dashboard.user.edit', $row->id) . '" class="btn btn-warning btn-sm">Edit</a> ';
+                $actionBtn .= '<form action="' . route('dashboard.user.delete', $row->id) . '" method="POST" style="display:inline;">';
                 $actionBtn .= csrf_field() . method_field('DELETE');
                 $actionBtn .= '<button type="submit" onclick="return confirm(\'Are you sure?\')" class="btn btn-danger btn-sm">Delete</button></form>';
                 return $actionBtn;
@@ -51,7 +51,7 @@ class UserController extends Controller
 
     public function show($id)
     {
-        
+
     }
 
     public function edit(User $id)
@@ -60,7 +60,7 @@ class UserController extends Controller
         return view('user.edit', compact('user'));
     }
 
-    public function update(Request $request,User $id)
+    public function update(Request $request, User $id)
     {
         $user = $id;
         $validated = $request->validate([
@@ -105,11 +105,11 @@ class UserController extends Controller
         $users = User::onlyTrashed()->select('*');
         return DataTables::of($users)
             ->addIndexColumn()
-            ->addColumn('action', function($row){
-                $actionBtn = '<form action="'.route('dashboard.restore', ['id' => $row->id]).'" method="POST" style="display:inline;">';
+            ->addColumn('action', function ($row) {
+                $actionBtn = '<form action="' . route('dashboard.restore', ['id' => $row->id]) . '" method="POST" style="display:inline;">';
                 $actionBtn .= csrf_field() . method_field('PATCH');
                 $actionBtn .= '<button type="submit" class="btn btn-success btn-sm me-2">restore</button></form>';
-                $actionBtn .= '<form action="'.route('dashboard.delete_permanent', ['id' => $row->id]).'" method="POST" style="display:inline;">';
+                $actionBtn .= '<form action="' . route('dashboard.delete_permanent', ['id' => $row->id]) . '" method="POST" style="display:inline;">';
                 $actionBtn .= csrf_field() . method_field('DELETE');
                 $actionBtn .= '<button type="submit" onclick="return confirm(\'Are you sure to delete permanently?\')" class="btn btn-danger btn-sm">Delete Permanent</button></form>';
                 return $actionBtn;
@@ -129,10 +129,12 @@ class UserController extends Controller
     public function deletePermanent($id)
     {
         $users = User::onlyTrashed()->find($id);
-        $users->forceDelete();
+        if ($users->transactions()->exists()) {
+            $users->transactions()->delete();
 
-        return redirect()->route('dashboard.user.index')->with('success', 'Successfully delete permanent data!');
+            $users->forceDelete();
+
+            return redirect()->route('dashboard.user.index')->with('success', 'Successfully delete permanent data!');
+        }
     }
-
-
 }

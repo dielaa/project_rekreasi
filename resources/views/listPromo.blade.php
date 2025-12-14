@@ -19,13 +19,10 @@
         </div>
     </div>
     <div class="container mt-5 ">
-        <div>
-            <h3>Promo</h3>
-            <small>Find many interesting promo and deals in here.</small>
-        </div>
         <div class="row mt-5">
             <div class="col-md-6">
                 <h3>{{count($promo)}} Promo</h3>
+                <small>Find many interesting promo and deals in here.</small>
             </div>
         </div>
         <div class="row mt-5">
@@ -39,7 +36,7 @@
                                     alt="">
                             </div>
                             <div class="col-md-10">
-                                <h5 class="card-title">{{$data->name}}</h5>
+                                <h5 class="card-title">{{$data->name}} ({{ $data->percent }}%)</h5>
                                 <p class="card-text">{{$data->description}}</p>
                                 <b>Valid from {{ $data->start_date }} until {{ $data->end_date }}</b>
                             </div>

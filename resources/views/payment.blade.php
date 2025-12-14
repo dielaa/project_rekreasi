@@ -27,7 +27,7 @@
                 <input type="hidden" name="amount" value="{{ $amount }}">
                 <input type="hidden" name="promo_id" value="{{ $promoId }}">
                 <input type="hidden" name="promo_value" value="{{ $promoValue }}">
-                <input type="hidden" name="payment_method" value="{{ $paymentMethod }}">
+                <input type="hidden" name="payment_method" value="{{ $paymentId }}">
                 <input type="hidden" name="virtual" value="{{ $virtual }}">
 
                 <input type="hidden" name="total" value="{{ $amount }}">

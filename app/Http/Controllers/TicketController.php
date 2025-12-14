@@ -313,13 +313,11 @@ class TicketController extends Controller
     {
         if (!auth()->check()) {
             return redirect()->route('login')
-                ->with('error', 'Silakan login dulu sebelum melanjutkan.');
+                ->with('error', 'Please login first before continuing.');
         }
         $cart = session()->get('cart', []);
         $visitDate = session('visit_date');
-        $promos = Promo::whereDate('start_date', '<=', $visitDate)
-            ->whereDate('end_date', '>=', $visitDate)
-            ->get();
+        $promos = Promo::whereDate('start_date', '<=', $visitDate)->whereDate('end_date', '>=', $visitDate)->get();
         $promoId = $request->promo_id;
         $selectedPromo = Promo::find($promoId);
         $summary = [];

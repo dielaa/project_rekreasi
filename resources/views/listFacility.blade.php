@@ -32,11 +32,8 @@
                     <div class="card shadow-sm" style="width: 100%;">
                         <div class="card-body">
                             <h5 class="card-title">{{ $facility->name }}</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">{{ $facility->category ?? 'Facility' }}</h6>
+                            <p class="card-text">Capacity: {{ $facility->capacity }}</p>
                             <p class="card-text">{{ $facility->description }}</p>
-                            @if($facility->link)
-                                <a href="{{ $facility->link }}" class="card-link" target="_blank">Learn More</a>
-                            @endif
                         </div>
                     </div>
                 </div>

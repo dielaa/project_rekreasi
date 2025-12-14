@@ -186,38 +186,33 @@ class PaymentController extends Controller
     {
         $finalTotal = $request->final_total;
         $promoId = $request->final_promo_id;
-        $paymentMethod = $request->payment_id;
+        $paymentId = $request->payment_id; 
         $invoice = 'INV-' . strtoupper(uniqid());
         $userId = auth()->id();
+
         $promoValue = null;
         if ($promoId) {
             $promo = Promo::find($promoId);
             $promoValue = $promo ? $promo->percent : null;
         }
+        $payment = Payment::find($paymentId);
+        $paymentName = $payment->type_payment;
+
         $virtual = null;
+        $qrisSvg = null;
 
-        if ($paymentMethod === 'BRI') {
-
+        if ($paymentName === 'BRI') {
             $virtual = '7777' . rand(1000000, 9999999);
-
-        } elseif ($paymentMethod === 'BCA') {
-
+        } elseif ($paymentName === 'BCA') {
             $virtual = '8800' . rand(1000000, 9999999);
-
-        } elseif ($paymentMethod === 'QRIS') {
-
-            if ($paymentMethod === 'QRIS') {
-                $qrisData = json_encode([
-                    'invoice' => $invoice,
-                    'amount' => $finalTotal,
-                    'user' => $userId,
-                ]);
-
-                $qrisSvg = QrCode::format('svg')->size(260)->generate($qrisData);
-            }
-
+        } elseif ($paymentName === 'QRIS') {
+            $qrisData = json_encode([
+                'invoice' => $invoice,
+                'amount' => $finalTotal,
+                'user' => $userId,
+            ]);
+            $qrisSvg = QrCode::format('svg')->size(260)->generate($qrisData);
         } else {
-
             $virtual = '9900' . rand(1000000, 9999999);
         }
 
@@ -229,8 +224,9 @@ class PaymentController extends Controller
             'userId' => $userId,
             'promoId' => $promoId,
             'promoValue' => $promoValue,
-            'paymentMethod' => $paymentMethod,
-            'qrisSvg' => $qrisSvg ?? null,
+            'paymentMethod' => $paymentName,
+            'paymentId' => $paymentId, 
+            'qrisSvg' => $qrisSvg,
         ]);
 
     }
@@ -285,15 +281,9 @@ class PaymentController extends Controller
 
     public function exportPdf($invoice)
     {
-        $transaction = Transaction::where('no', $invoice)
-            ->with(['details.ticket', 'user', 'payment', 'promo'])
-            ->first()
-            ->toArray();
-
+        $transaction = Transaction::where('no', $invoice)->with(['details.ticket', 'user', 'payment', 'promo'])->first()->toArray();
         view()->share('transaction', $transaction);
-
-        $pdf = Pdf::loadView('pdf', $transaction)
-            ->setPaper('A4', 'portrait');
+        $pdf = Pdf::loadView('pdf', $transaction)->setPaper('A4', 'portrait');
 
         $fileName = 'Proof of Ticket Purchase.pdf';
         return $pdf->download($fileName);

@@ -49,12 +49,34 @@
                                         Rp{{ number_format($finalPrice, 0, ',', '.') }}
 
                                     </h5>
-
-                                    <form action="{{ route('cart.add') }}" method="POST">
-                                        @csrf
-                                        <input type="hidden" name="ticket_id" value="{{ $data->id }}">
-                                        <button class="btn btn-primary" type="submit">Add</button>
-                                    </form>
+                                    @php
+                                        $cart = session('cart', []);
+                                        $inCart = isset($cart[$data->id]);
+                                    @endphp
+                                    @if ($inCart)
+                                        <div class="d-flex align-items-center">
+                                            <form action="{{ route('cart.update') }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="id" value="{{ $data->id }}">
+                                                <input type="hidden" name="qty" value="{{ $cart[$data->id]['qty'] - 1 }}">
+                                                <button class="btn btn-outline-secondary btn-sm" @if ($cart[$data->id]['qty'] <= 1)
+                                                disabled @endif>-</button>
+                                            </form>
+                                            <span class="mx-2">{{ $cart[$data->id]['qty'] }}</span>
+                                            <form action="{{ route('cart.update') }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="id" value="{{ $data->id }}">
+                                                <input type="hidden" name="qty" value="{{ $cart[$data->id]['qty'] + 1 }}">
+                                                <button class="btn btn-outline-secondary btn-sm">+</button>
+                                            </form>
+                                        </div>
+                                    @else
+                                        <form action="{{ route('cart.add') }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="ticket_id" value="{{ $data->id }}">
+                                            <button class="btn btn-primary" type="submit">Add</button>
+                                        </form>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -79,8 +101,7 @@
                             @foreach ($cart as $id => $item)
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <div>
-                                        <strong>{{ $item['name'] }}</strong><br>
-                                        Rp{{ number_format($item['price'], 0, ',', '.') }}
+                                        <strong>{{ $item['name'] }}</strong><br>Rp{{ number_format($item['price'], 0, ',', '.') }}
                                     </div>
                                     <div class="d-flex align-items-center">
                                         <form action="{{ route('cart.update') }}" method="POST">
@@ -111,7 +132,8 @@
                             @endphp
                             <h5>Total: Rp{{ number_format($total, 0, ',', '.') }}</h5>
                             <!-- <div style="color: black; font-weight: bold; cursor:pointer;" class="w-100 text-center" id="btnOrder">RINGKASAN PEMESANAN</div> -->
-                            <a href="{{ auth()->check() ? route('reservation.summary') : route('login') }}" class="btn btn-success w-100">Reservation Summary</a>
+                            <a href="{{ auth()->check() ? route('reservation.summary') : route('login') }}"
+                                class="btn btn-success w-100">Reservation Summary</a>
                         @endif
                     </div>
                 </div>
@@ -119,6 +141,9 @@
         </div>
     </div>
     </div>
+@endsection
+
+@push('scripts')
     <script>
         document.getElementById('inputDate').addEventListener('change', function () {
             const selectedDate = this.value;
@@ -128,4 +153,4 @@
             }
         });
     </script>
-@endsection
+@endpush

@@ -9,7 +9,7 @@
             <div class="row mt-4">
 
                 <div class="col-6">
-                    <h5>December Ticket Purchase Data {{ now()->format('F') }}</h5>
+                    <h5>Ticket Purchase Data {{ now()->format('F') }}</h5>
                     <canvas id="chartBar"></canvas>
                 </div>
                 <div class="col-6">
@@ -18,7 +18,6 @@
                         <canvas id="chartPie"></canvas>
                     </div>
                 </div>
-
             </div>
         </div>
 @endsection

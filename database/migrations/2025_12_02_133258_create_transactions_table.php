@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('sub_total', 10, 2);
             $table->foreignId('payment_id')->constrained('payments'); 
             $table->string('attachment')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
